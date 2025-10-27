@@ -54,7 +54,7 @@ const TaskItem = ({
     id: "1",
     title: "Sample Task",
     description: "This is a sample task description",
-    dueDate: new Date().toISOString().split('T')[0],
+    dueDate: new Date().toISOString().split("T")[0],
     priority: "medium",
     completed: false,
     tags: ["work", "important"],
@@ -92,7 +92,7 @@ const TaskItem = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.1 }}
       whileHover={{ scale: 1.02 }}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
@@ -119,7 +119,9 @@ const TaskItem = ({
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>
-                        {task.completed ? "Mark as incomplete" : "Mark as complete"}
+                        {task.completed
+                          ? "Mark as incomplete"
+                          : "Mark as complete"}
                       </p>
                     </TooltipContent>
                   </Tooltip>
