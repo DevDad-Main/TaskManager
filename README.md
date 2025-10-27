@@ -47,7 +47,7 @@ A modern, feature-rich task management system built with React, TypeScript, and 
 - **TypeScript** - End-to-end type safety
 - **PostgreSQL** - Robust relational database
 - **Sequelize** - ORM for database operations
-- **Express** - Web framework (recommended)
+- **Express** - Web framework
 
 ## 🚀 Getting Started
 
@@ -61,8 +61,8 @@ A modern, feature-rich task management system built with React, TypeScript, and 
 1. **Clone the repository**
 
 ```bash
-git clone <your-repo-url>
-cd task-manager
+git clone https://github.com/DevDad-Main/TaskManager
+cd TaskManager
 ```
 
 2. **Install dependencies**
@@ -112,7 +112,7 @@ npm run dev
 ## 📁 Project Structure
 
 ```
-task-manager/
+TaskManager/
 ├── src/
 │   ├── components/
 │   │   ├── auth/           # Authentication components
@@ -164,6 +164,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+## 🧑‍💻 Author
+
+**Olly** - Aspiring _Backend Developer_
+📨 [softwaredevdad@gmail.com]
 
 ## 🙏 Acknowledgments
 
