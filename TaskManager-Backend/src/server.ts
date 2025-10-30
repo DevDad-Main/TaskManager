@@ -7,6 +7,7 @@ import morgan from "morgan";
 import { xss } from "express-xss-sanitizer";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
+import userRouter from "./routes/user.route";
 
 //#region Constants
 const app = express();
@@ -57,6 +58,8 @@ app.use(
 app.use("/", (req, res) => {
   res.send("Hello World!");
 });
+
+app.use("api/v1/user", userRouter);
 //#endregion
 
 export default app;
