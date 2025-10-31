@@ -26,8 +26,7 @@ const Home = () => {
     setUser({
       id: "1",
       email: email,
-      // name: email.split("@")[0],
-      name: "devdad",
+      name: email.split("@")[0],
     });
     setIsAuthenticated(true);
   };
@@ -64,7 +63,7 @@ const Home = () => {
             transition={{ duration: 0.5 }}
             className="flex items-center"
           >
-            <h1 className="text-2xl font-bold text-primary">TaskManager</h1>
+            <h1 className="text-2xl font-bold text-primary">Task Manager</h1>
           </motion.div>
 
           {/* Mobile menu button */}
@@ -121,12 +120,14 @@ const Home = () => {
       </header>
 
       {/* Main content */}
-      <main className="flex-1 container mx-auto px-4 py-6">
+      <main
+        className={`flex-1 ${!isAuthenticated ? "container mx-auto px-4 py-6" : ""}`}
+      >
         {!isAuthenticated ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.5 }}
             className="max-w-md mx-auto mt-10"
           >
             <Card>
@@ -158,7 +159,8 @@ const Home = () => {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.5 }}
+            className="h-full"
           >
             <TaskBoard />
           </motion.div>
@@ -168,7 +170,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t bg-card py-4">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} TaskManager. All rights reserved.
+          © {new Date().getFullYear()} TaskMaster. All rights reserved.
         </div>
       </footer>
     </div>
