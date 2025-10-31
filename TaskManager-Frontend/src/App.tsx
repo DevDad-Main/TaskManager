@@ -1,18 +1,16 @@
-import { Suspense } from "react";
-import { useRoutes, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./components/home";
-import routes from "tempo-routes";
+import { TaskProvider } from "./contexts/TaskContext";
 
 function App() {
   return (
-    <Suspense fallback={<p>Loading...</p>}>
-      <>
+    <TaskProvider>
+      <Router>
         <Routes>
           <Route path="/" element={<Home />} />
         </Routes>
-        {import.meta.env.VITE_TEMPO === "true" && useRoutes(routes)}
-      </>
-    </Suspense>
+      </Router>
+    </TaskProvider>
   );
 }
 

@@ -2,112 +2,51 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
-  Filter,
   Plus,
   Grid,
   List,
   SortAsc,
   SortDesc,
+  Filter,
 } from "lucide-react";
-import TaskItem from "./TaskItem";
-import FolderList from "./FolderList";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { Badge } from "../ui/badge";
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import TaskItem from "./TaskItem";
+import FolderList from "./FolderList";
+import { useTaskContext } from "@/contexts/TaskContext";
 
-interface Task {
-  id: string;
-  title: string;
-  description: string;
-  dueDate?: string;
-  priority: "low" | "medium" | "high";
-  completed: boolean;
-  tags: string[];
-  folderId?: string;
-}
+const TaskBoard = () => {
+  const {
+    tasks,
+    folders,
+    addTask,
+    updateTask,
+    deleteTask,
+    toggleTaskComplete,
+    addFolder,
+    updateFolder,
+    deleteFolder,
+  } = useTaskContext();
 
-interface Folder {
-  id: string;
-  name: string;
-  color: string;
-}
-
-interface TaskBoardProps {
-  tasks?: Task[];
-  folders?: Folder[];
-  onTaskCreate?: (task: Omit<Task, "id">) => void;
-  onTaskUpdate?: (task: Task) => void;
-  onTaskDelete?: (taskId: string) => void;
-  onTaskComplete?: (taskId: string, completed: boolean) => void;
-}
-
-const TaskBoard: React.FC<TaskBoardProps> = ({
-  tasks = [
-    {
-      id: "1",
-      title: "Complete project proposal",
-      description: "Finish the project proposal for the client meeting",
-      dueDate: "2023-06-15",
-      priority: "high",
-      completed: false,
-      tags: ["work", "urgent"],
-      folderId: "1",
-    },
-    {
-      id: "2",
-      title: "Buy groceries",
-      description: "Get milk, eggs, bread, and vegetables",
-      dueDate: "2023-06-10",
-      priority: "medium",
-      completed: false,
-      tags: ["personal"],
-      folderId: "2",
-    },
-    {
-      id: "3",
-      title: "Schedule dentist appointment",
-      description: "Call the dentist to schedule a check-up",
-      dueDate: "2023-06-20",
-      priority: "low",
-      completed: true,
-      tags: ["health"],
-      folderId: "2",
-    },
-  ],
-  folders = [
-    { id: "1", name: "Work", color: "#4f46e5" },
-    { id: "2", name: "Personal", color: "#10b981" },
-  ],
-  onTaskCreate = () => {},
-  onTaskUpdate = () => {},
-  onTaskDelete = () => {},
-  onTaskComplete = () => {},
-}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -116,8 +55,8 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   const [filterFolder, setFilterFolder] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingTask, setEditingTask] = useState<Task | null>(null);
-  const [newTask, setNewTask] = useState<Omit<Task, "id">>({
+  const [editingTask, setEditingTask] = useState<any>(null);
+  const [newTask, setNewTask] = useState<any>({
     title: "",
     description: "",
     priority: "medium",
@@ -133,29 +72,24 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   // Filter and sort tasks
   const filteredTasks = tasks
     .filter((task) => {
-      // Search filter
       const matchesSearch =
         task.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         task.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-      // Priority filter
       const matchesPriority =
         filterPriority === "all" || task.priority === filterPriority;
 
-      // Status filter - UPDATED: Hide completed tasks unless explicitly filtered
       const matchesStatus =
         filterStatus === "all" ||
         (filterStatus === "completed" && task.completed) ||
         (filterStatus === "active" && !task.completed);
 
-      // Folder filter
       const matchesFolder =
         filterFolder === "all" || task.folderId === filterFolder;
 
       return matchesSearch && matchesPriority && matchesStatus && matchesFolder;
     })
     .sort((a, b) => {
-      // Sort by due date
       if (!a.dueDate && !b.dueDate) return 0;
       if (!a.dueDate) return 1;
       if (!b.dueDate) return -1;
@@ -167,7 +101,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
     });
 
   const handleCreateTask = () => {
-    onTaskCreate(newTask);
+    addTask(newTask);
     setNewTask({
       title: "",
       description: "",
@@ -182,13 +116,13 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
 
   const handleUpdateTask = () => {
     if (editingTask) {
-      onTaskUpdate(editingTask);
+      updateTask(editingTask);
       setEditingTask(null);
       setIsEditDialogOpen(false);
     }
   };
 
-  const handleEditClick = (task: Task) => {
+  const handleEditClick = (task: any) => {
     setEditingTask({ ...task });
     setIsEditDialogOpen(true);
   };
@@ -206,12 +140,16 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
   const handleRemoveTag = (tag: string) => {
     setNewTask({
       ...newTask,
-      tags: newTask.tags.filter((t) => t !== tag),
+      tags: newTask.tags.filter((t: string) => t !== tag),
     });
   };
 
   const handleAddEditTag = () => {
-    if (editingTask && editTaskTag.trim() && !editingTask.tags.includes(editTaskTag.trim())) {
+    if (
+      editingTask &&
+      editTaskTag.trim() &&
+      !editingTask.tags.includes(editTaskTag.trim())
+    ) {
       setEditingTask({
         ...editingTask,
         tags: [...editingTask.tags, editTaskTag.trim()],
@@ -224,29 +162,37 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
     if (editingTask) {
       setEditingTask({
         ...editingTask,
-        tags: editingTask.tags.filter((t) => t !== tag),
+        tags: editingTask.tags.filter((t: string) => t !== tag),
       });
     }
   };
 
   // Calculate folder stats for sidebar
-  const folderStats = folders.map(folder => {
-    const folderTasks = tasks.filter(task => task.folderId === folder.id);
-    const completedTasks = folderTasks.filter(task => task.completed);
-    const activeTasks = folderTasks.filter(task => !task.completed);
-    
+  const folderStats = folders.map((folder) => {
+    const folderTasks = tasks.filter((task) => task.folderId === folder.id);
+    const completedTasks = folderTasks.filter((task) => task.completed);
+    const activeTasks = folderTasks.filter((task) => !task.completed);
+
     return {
       ...folder,
       completedCount: completedTasks.length,
       activeCount: activeTasks.length,
       totalCount: folderTasks.length,
-      completedTasks: completedTasks.map(t => ({ id: t.id, title: t.title, completed: t.completed })),
-      activeTasks: activeTasks.map(t => ({ id: t.id, title: t.title, completed: t.completed }))
+      completedTasks: completedTasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        completed: t.completed,
+      })),
+      activeTasks: activeTasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        completed: t.completed,
+      })),
     };
   });
 
   return (
-    <div className="flex flex-col md:flex-row h-full bg-background">
+    <div className="flex h-full bg-background">
       {/* Mobile Sidebar Toggle */}
       <div className="md:hidden p-4 border-b">
         <Button
@@ -258,7 +204,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
         </Button>
       </div>
 
-      {/* Sidebar */}
+      {/* Sidebar - FIXED POSITIONING */}
       <AnimatePresence>
         {(isMobileSidebarOpen || window.innerWidth >= 768) && (
           <motion.div
@@ -266,21 +212,28 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -300, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className={`w-full md:w-80 bg-gradient-to-br from-slate-50 to-slate-100 border-r p-4 ${isMobileSidebarOpen ? "fixed inset-0 z-50" : "hidden md:block"}`}
+            className={`w-full md:w-80 bg-gradient-to-br from-slate-50 to-slate-100 border-r ${isMobileSidebarOpen ? "fixed inset-0 z-50" : "hidden md:block"}`}
           >
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Folders</h2>
-              {isMobileSidebarOpen && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMobileSidebarOpen(false)}
-                >
-                  Close
-                </Button>
-              )}
+            <div className="h-full p-4">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold">Folders</h2>
+                {isMobileSidebarOpen && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsMobileSidebarOpen(false)}
+                  >
+                    Close
+                  </Button>
+                )}
+              </div>
+              <FolderList
+                folders={folderStats}
+                onFolderCreate={addFolder}
+                onFolderEdit={updateFolder}
+                onFolderDelete={deleteFolder}
+              />
             </div>
-            <FolderList folders={folderStats} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -401,7 +354,7 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
                       </Button>
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
-                      {newTask.tags.map((tag) => (
+                      {newTask.tags.map((tag: string) => (
                         <Badge
                           key={tag}
                           variant="secondary"
@@ -451,7 +404,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
                       id="edit-title"
                       value={editingTask.title}
                       onChange={(e) =>
-                        setEditingTask({ ...editingTask, title: e.target.value })
+                        setEditingTask({
+                          ...editingTask,
+                          title: e.target.value,
+                        })
                       }
                       placeholder="Task title"
                     />
@@ -462,7 +418,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
                       id="edit-description"
                       value={editingTask.description}
                       onChange={(e) =>
-                        setEditingTask({ ...editingTask, description: e.target.value })
+                        setEditingTask({
+                          ...editingTask,
+                          description: e.target.value,
+                        })
                       }
                       placeholder="Task description"
                     />
@@ -475,7 +434,10 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
                         type="date"
                         value={editingTask.dueDate}
                         onChange={(e) =>
-                          setEditingTask({ ...editingTask, dueDate: e.target.value })
+                          setEditingTask({
+                            ...editingTask,
+                            dueDate: e.target.value,
+                          })
                         }
                       />
                     </div>
@@ -696,9 +658,9 @@ const TaskBoard: React.FC<TaskBoardProps> = ({
                     <TaskItem
                       task={task}
                       folders={folders}
-                      onUpdate={onTaskUpdate}
-                      onDelete={onTaskDelete}
-                      onComplete={onTaskComplete}
+                      onUpdate={updateTask}
+                      onDelete={deleteTask}
+                      onComplete={toggleTaskComplete}
                       onEdit={handleEditClick}
                       viewMode={viewMode}
                     />
