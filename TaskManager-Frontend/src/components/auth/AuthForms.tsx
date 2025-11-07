@@ -16,6 +16,12 @@ import {
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Loader2 } from "lucide-react";
+import axios from "axios";
+
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
+
+export const axiosApi = axios;
 
 // Form schemas
 const loginSchema = z.object({
@@ -57,7 +63,7 @@ const AuthForms = ({
   isLoading = false,
   error = null,
 }: AuthFormsProps) => {
-  const [isLoginView, setIsLoginView] = useState(true);
+  const [isLoginView, setIsLoginView] = useState(false);
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),

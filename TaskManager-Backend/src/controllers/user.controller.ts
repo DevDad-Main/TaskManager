@@ -2,27 +2,29 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrpt from "bcrypt";
 import generateJWT from "../utils/generateJWT.util";
+import { RegisterBody } from "../interfaces/user.interfaces";
 
+//#region Constants
 const prisma = new PrismaClient();
 const SALT_ROUNDS = 12;
+//#endregion
 
 //#region User Registration
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body as {
-      email: string;
-      password: string;
-    };
+    const { email, password, name } = req.body as RegisterBody;
+
+    console.log("Request body:", req.body);
 
     // Simple validation for now - TODO: Add express-validator
-    if (!email || !password) {
+    if (!email || !password || !name) {
       return res
         .status(400)
         .json({ message: "Email and password are required" });
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: email },
     });
 
     if (existingUser)
@@ -31,12 +33,23 @@ export const registerUser = async (req: Request, res: Response) => {
     const hashedPassword = await bcrpt.hash(password, SALT_ROUNDS);
 
     const user = await prisma.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, password: hashedPassword, name },
     });
 
-    return res.status(201).json({ message: "User created" });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal Server Error" });
+    const token = await generateJWT(user.id);
+    // NOTE: Return the user back to the client so they can authenticate and log the user in.
+    return res
+      .cookie("token", token, {
+        httpOnly: process.env.NODE_ENV === "production" ? true : false,
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      })
+      .status(201)
+      .json({ message: "User created", success: true, user });
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 //#endregion

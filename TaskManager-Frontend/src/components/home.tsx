@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AuthForms from "./auth/AuthForms";
+import AuthForms, { axiosApi } from "./auth/AuthForms";
 import TaskBoard from "./dashboard/TaskBoard";
 import { UserCircle, LogOut, Menu } from "lucide-react";
 
@@ -19,27 +19,56 @@ const Home = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const handleLogin = () => {};
 
   // Mock login function - in a real app, this would connect to your auth service
-  const handleLogin = (email: string, password: string) => {
-    // Simulate successful login
-    setUser({
-      id: "1",
-      email: email,
-      name: email.split("@")[0],
-    });
-    setIsAuthenticated(true);
-  };
+  // const handleLogin = (email: string, password: string) => {
+  //   // Simulate successful login
+  //   setUser({
+  //     id: "1",
+  //     email: email,
+  //     name: "Helloworld",
+  //   });
+  //   setIsAuthenticated(true);
+  // };
 
   // Mock register function
-  const handleRegister = (email: string, password: string, name: string) => {
+  const handleRegister = async (data: {
+    email: string;
+    password: string;
+    name: string;
+  }) => {
     // Simulate successful registration
-    setUser({
-      id: "1",
-      email: email,
-      name: name,
-    });
-    setIsAuthenticated(true);
+    console.log(
+      "Calling:",
+      axiosApi.defaults.baseURL + "/api/v1/user/register",
+    );
+
+    const { email, password, name } = data;
+
+    try {
+      const response = await axiosApi.post(`/api/v1/user/register`, {
+        email,
+        password,
+        name,
+      });
+
+      if (response.data.success) {
+        setUser({
+          id: response.data.user.id,
+          email: email,
+          name: name,
+        });
+        setIsAuthenticated(true);
+      } else {
+        console.log(
+          "Error registering user",
+          response.data.message || response.data.message.data,
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // Mock logout function
@@ -170,7 +199,7 @@ const Home = () => {
       {/* Footer */}
       <footer className="border-t bg-card py-4">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} TaskMaster. All rights reserved.
+          © {new Date().getFullYear()} Task Manager. All rights reserved.
         </div>
       </footer>
     </div>
