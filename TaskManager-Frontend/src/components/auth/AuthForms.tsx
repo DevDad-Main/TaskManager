@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -51,6 +51,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 interface AuthFormsProps {
+  mode: "login" | "register"; // <-- REQUIRED
   onLogin?: (data: LoginFormValues) => void;
   onRegister?: (data: RegisterFormValues) => void;
   isLoading?: boolean;
@@ -58,12 +59,13 @@ interface AuthFormsProps {
 }
 
 const AuthForms = ({
+  mode,
   onLogin,
   onRegister,
   isLoading = false,
   error = null,
 }: AuthFormsProps) => {
-  const [isLoginView, setIsLoginView] = useState(false);
+  const isLoginView = mode === "login";
 
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -89,13 +91,6 @@ const AuthForms = ({
 
   const handleRegisterSubmit = (data: RegisterFormValues) => {
     if (onRegister) onRegister(data);
-  };
-
-  const toggleView = () => {
-    setIsLoginView(!isLoginView);
-    // Reset forms when toggling
-    loginForm.reset();
-    registerForm.reset();
   };
 
   return (
@@ -259,13 +254,6 @@ const AuthForms = ({
                 </form>
               )}
             </CardContent>
-            <CardFooter className="flex justify-center">
-              <Button variant="link" onClick={toggleView} type="button">
-                {isLoginView
-                  ? "Don't have an account? Sign up"
-                  : "Already have an account? Sign in"}
-              </Button>
-            </CardFooter>
           </Card>
         </motion.div>
       </AnimatePresence>

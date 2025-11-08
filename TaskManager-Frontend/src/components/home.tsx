@@ -19,7 +19,29 @@ const Home = () => {
   const [user, setUser] = useState<User | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
-  const handleLogin = () => {};
+
+  const handleLogin = async (data: { email: string; password: string }) => {
+    const { email, password } = data;
+    try {
+      const { data } = await axiosApi.post(`/api/v1/user/login`, {
+        email,
+        password,
+      });
+
+      if (data.success) {
+        setUser({
+          id: data.user.id,
+          email: email,
+          name: data.user.name,
+        });
+        setIsAuthenticated(true);
+      } else {
+        console.log("Error logging in", data.message || data.message.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // Mock login function - in a real app, this would connect to your auth service
   // const handleLogin = (email: string, password: string) => {

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import bcrpt from "bcrypt";
 import generateJWT from "../utils/generateJWT.util";
-import { RegisterBody } from "../interfaces/user.interfaces";
+import { LoginBody, RegisterBody } from "../interfaces/user.interfaces";
 
 //#region Constants
 const prisma = new PrismaClient();
@@ -20,11 +20,11 @@ export const registerUser = async (req: Request, res: Response) => {
     if (!email || !password || !name) {
       return res
         .status(400)
-        .json({ message: "Email and password are required" });
+        .json({ message: "Email, Password or Name are required" });
     }
 
     const existingUser = await prisma.user.findUnique({
-      where: { email: email },
+      where: { email },
     });
 
     if (existingUser)
@@ -47,6 +47,46 @@ export const registerUser = async (req: Request, res: Response) => {
       })
       .status(201)
       .json({ message: "User created", success: true, user });
+  } catch (error: any) {
+    console.log(error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+//#endregion
+
+//#region User Login
+export const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body as LoginBody;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) return res.status(404).json({ message: "User Not Found" });
+
+    const isPasswordCorrect = await bcrpt.compare(password, user.password);
+
+    if (!isPasswordCorrect)
+      return res.status(401).json({ message: "Incorrect Password" });
+
+    const token = await generateJWT(user.id);
+
+    return res
+      .cookie("token", token, {
+        httpOnly: process.env.NODE_ENV === "production" ? true : false,
+        maxAge: 1000 * 60 * 60 * 24, // 1 day
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      })
+      .status(200)
+      .json({ message: "User Logged In", success: true, user });
   } catch (error: any) {
     console.log(error);
     return res.status(500).json({ message: error.message });
