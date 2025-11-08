@@ -41,7 +41,7 @@ services:
     command: >
       sh -c "
         npx prisma generate &&
-        npx prisma migrate deploy &&
+        npx prisma migrate dev --name add-name-to-user --skip-seed || npx prisma migrate deploy &&
         echo 'Prisma ready!'
       "
     restart: "no"
@@ -82,7 +82,7 @@ services:
       - .env # shared ports if needed
       - ./TaskManager-Frontend/.env # VITE_ / REACT_APP_ vars
     environment:
-      VITE_API_URL: http://backend:${BACKEND_PORT}
+      VITE_API_URL: http://localhost:${BACKEND_PORT}
       PORT: ${FRONTEND_PORT}
     volumes:
       - ./TaskManager-Frontend:/app
