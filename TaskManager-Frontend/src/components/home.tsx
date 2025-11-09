@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -27,26 +27,44 @@ const Home = () => {
   // Check for existing auth on mount
   useEffect(() => {
     const checkAuth = async () => {
-      const storedUser = localStorage.getItem("user");
-      const authToken = localStorage.getItem("authToken");
+      try {
+        const { data } = await axiosApi.get(`/api/v1/user/authenticate`);
 
-      if (storedUser && authToken) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          setUser(parsedUser);
+        if (data.success) {
+          setUser({
+            id: data.user.id,
+            email: data.user.email,
+            name: data.user.name,
+          });
           setIsAuthenticated(true);
 
-          // Fetch user's data
           await fetchTasks();
           await fetchFolders();
-        } catch (error) {
-          console.error("Error restoring session:", error);
-          // Clear invalid data
-          localStorage.removeItem("user");
-          localStorage.removeItem("authToken");
         }
-        console.log("Hello World");
+      } catch (error) {
+        console.log(error);
       }
+      // const storedUser = localStorage.getItem("user");
+      // const authToken = localStorage.getItem("authToken");
+      //
+      // if (storedUser && authToken) {
+      //   try {
+      //     const parsedUser = JSON.parse(storedUser);
+      //     setUser(parsedUser);
+      //     setIsAuthenticated(true);
+      //
+      //     // Fetch user's data
+      //     await fetchTasks();
+      //     await fetchFolders();
+      //   } catch (error) {
+      //     console.error("Error restoring session:", error);
+      //     // Clear invalid data
+      //     localStorage.removeItem("user");
+      //     localStorage.removeItem("authToken");
+      //   }
+      //   console.log("Hello World");
+      // }
+      console.log("Hello World");
       setIsLoading(false);
     };
 
@@ -64,7 +82,7 @@ const Home = () => {
       if (data.success) {
         setUser({
           id: data.user.id,
-          email: email,
+          email: data.user.email,
           name: data.user.name,
         });
         setIsAuthenticated(true);
@@ -114,8 +132,8 @@ const Home = () => {
       if (response.data.success) {
         setUser({
           id: response.data.user.id,
-          email: email,
-          name: name,
+          email,
+          name,
         });
         setIsAuthenticated(true);
       } else {
@@ -277,6 +295,6 @@ const Home = () => {
 };
 
 export default Home;
-function useEffect(arg0: () => void, arg1: undefined[]) {
-  throw new Error("Function not implemented.");
-}
+// function useEffect(arg0: () => void, arg1: undefined[]) {
+//   throw new Error("Function not implemented.");
+// }

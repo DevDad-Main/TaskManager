@@ -4,10 +4,11 @@ import {
   loginUser,
   registerUser,
 } from "../controllers/user.controller";
+import { isAuthenticated } from "../middleware/auth.middleware";
 
 const userRouter = express.Router();
 
-userRouter.get("/authenticate", authenticateUser);
+userRouter.get("/authenticate", isAuthenticated, authenticateUser);
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
 
