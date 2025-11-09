@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuthForms, { axiosApi } from "./auth/AuthForms";
 import TaskBoard from "./dashboard/TaskBoard";
 import { UserCircle, LogOut, Menu } from "lucide-react";
+import { useTaskContext } from "@/contexts/TaskContext";
 
 interface User {
   id: string;
@@ -17,8 +18,40 @@ interface User {
 const Home = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+
+  const { fetchTasks, fetchFolders } = useTaskContext();
+
+  // Check for existing auth on mount
+  useEffect(() => {
+    const checkAuth = async () => {
+      const storedUser = localStorage.getItem("user");
+      const authToken = localStorage.getItem("authToken");
+
+      if (storedUser && authToken) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          setIsAuthenticated(true);
+
+          // Fetch user's data
+          await fetchTasks();
+          await fetchFolders();
+        } catch (error) {
+          console.error("Error restoring session:", error);
+          // Clear invalid data
+          localStorage.removeItem("user");
+          localStorage.removeItem("authToken");
+        }
+        console.log("Hello World");
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
+  }, []);
 
   const handleLogin = async (data: { email: string; password: string }) => {
     const { email, password } = data;
@@ -35,6 +68,9 @@ const Home = () => {
           name: data.user.name,
         });
         setIsAuthenticated(true);
+
+        await fetchTasks();
+        await fetchFolders();
       } else {
         console.log("Error logging in", data.message || data.message.data);
       }
@@ -102,6 +138,18 @@ const Home = () => {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
   };
+
+  // Show loading state while checking auth
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -229,3 +277,6 @@ const Home = () => {
 };
 
 export default Home;
+function useEffect(arg0: () => void, arg1: undefined[]) {
+  throw new Error("Function not implemented.");
+}

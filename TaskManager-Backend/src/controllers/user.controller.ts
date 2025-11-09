@@ -1,11 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+// import { PrismaClient } from "@prisma/client";
+import prisma from "../configs/prisma.config";
 import { Request, Response } from "express";
 import bcrpt from "bcrypt";
 import generateJWT from "../utils/generateJWT.util";
 import { LoginBody, RegisterBody } from "../interfaces/user.interfaces";
 
 //#region Constants
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 const SALT_ROUNDS = 12;
 //#endregion
 
@@ -92,4 +93,30 @@ export const loginUser = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+//#endregion
+
+//#region User Authentication
+/**
+ * Authenticate a user by checking if the user is logged in.
+ * @param req Request
+ * @param res Response
+ * @returns User Object
+ */
+export const authenticateUser = async (req: Request, res: Response) => {
+  const userId = req.user?.id;
+
+  if (!userId)
+    return res.status(401).json({ message: "User not authenticated" });
+
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user) return res.status(400).json({ message: "User not found" });
+
+  return res
+    .status(200)
+    .json({ success: true, user, message: "User Authenticated" });
+};
+
 //#endregion
