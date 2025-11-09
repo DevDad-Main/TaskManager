@@ -40,31 +40,16 @@ const Home = () => {
 
           await fetchTasks();
           await fetchFolders();
+        } else {
+          setIsAuthenticated(false);
+          console.log(
+            "Error authenticating user",
+            data.message || data.message.data,
+          );
         }
       } catch (error) {
         console.log(error);
       }
-      // const storedUser = localStorage.getItem("user");
-      // const authToken = localStorage.getItem("authToken");
-      //
-      // if (storedUser && authToken) {
-      //   try {
-      //     const parsedUser = JSON.parse(storedUser);
-      //     setUser(parsedUser);
-      //     setIsAuthenticated(true);
-      //
-      //     // Fetch user's data
-      //     await fetchTasks();
-      //     await fetchFolders();
-      //   } catch (error) {
-      //     console.error("Error restoring session:", error);
-      //     // Clear invalid data
-      //     localStorage.removeItem("user");
-      //     localStorage.removeItem("authToken");
-      //   }
-      //   console.log("Hello World");
-      // }
-      console.log("Hello World");
       setIsLoading(false);
     };
 
@@ -295,6 +280,3 @@ const Home = () => {
 };
 
 export default Home;
-// function useEffect(arg0: () => void, arg1: undefined[]) {
-//   throw new Error("Function not implemented.");
-// }
