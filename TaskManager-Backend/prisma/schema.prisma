@@ -24,7 +24,7 @@ model User {
   email    String @unique
   name     String
   password String
-
+  tasks    Task[]
   folders Folder[]
 }
 
@@ -45,6 +45,8 @@ model Task {
   priority    Priority
   dueDate     DateTime
   folder      Folder   @relation(fields: [folderId], references: [id])
+  author      User     @relation(fields: [userId], references: [id])
   folderId    String
   tags        String[]
+  userId      String
 }

@@ -60,22 +60,25 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch tasks from backend
   const fetchTasks = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await axiosApi.get("/api/v1/tasks");
-      if (response.data.success) {
-        setTasks(response.data.tasks || []);
-      }
-    } catch (err: any) {
-      setError("Failed to fetch tasks");
-      console.error("Error fetching tasks:", err);
-    } finally {
-      setLoading(false);
-    }
+    console.log("fetchTasks");
   };
+  // // Fetch tasks from backend
+  // const fetchTasks = async () => {
+  //   setLoading(true);
+  //   setError(null);
+  //   try {
+  //     const response = await axiosApi.get("/api/v1/tasks");
+  //     if (response.data.success) {
+  //       setTasks(response.data.tasks || []);
+  //     }
+  //   } catch (err: any) {
+  //     setError("Failed to fetch tasks");
+  //     console.error("Error fetching tasks:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   // Fetch folders from backend
   const fetchFolders = async () => {

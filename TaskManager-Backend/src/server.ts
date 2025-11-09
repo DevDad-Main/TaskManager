@@ -8,6 +8,8 @@ import { xss } from "express-xss-sanitizer";
 import hpp from "hpp";
 import rateLimit from "express-rate-limit";
 import userRouter from "./routes/user.route";
+import taskRouter from "./routes/task.route";
+import folderRouter from "./routes/folder.route";
 
 //#region Constants
 const app = express();
@@ -55,11 +57,13 @@ app.use(cookieParser());
 //#endregion
 
 //#region Endpoints
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Hello World!");
+// });
 
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/tasks", taskRouter);
+app.use("/api/v1/folders", folderRouter);
 //#endregion
 
 export default app;
