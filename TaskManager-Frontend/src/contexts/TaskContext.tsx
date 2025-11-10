@@ -60,10 +60,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const fetchTasks = async () => {
-  //   console.log("fetchTasks");
-  // };
-
   // Fetch tasks from backend
   const fetchTasks = async () => {
     setLoading(true);
@@ -121,6 +117,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
       const response = await axiosApi.put(`/api/v1/tasks/${task.id}`, task);
       if (response.data.success) {
         setTasks(tasks.map((t) => (t.id === task.id ? response.data.task : t)));
+        // await fetchTasks();
       }
     } catch (err: any) {
       setError("Failed to update task");
@@ -132,6 +129,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   // Delete task
   const deleteTask = async (taskId: string) => {
     try {
+      console.log("Deleting task:", taskId);
       const response = await axiosApi.delete(`/api/v1/tasks/${taskId}`);
       if (response.data.success) {
         setTasks(tasks.filter((t) => t.id !== taskId));

@@ -29,6 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTaskContext } from "@/contexts/TaskContext";
 
 export interface TaskItemProps {
   task?: {
@@ -69,6 +70,8 @@ const TaskItem = ({
 }: TaskItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const { deleteTask } = useTaskContext();
+
   const priorityColors = {
     low: "bg-green-100 text-green-800",
     medium: "bg-yellow-100 text-yellow-800",
@@ -83,8 +86,9 @@ const TaskItem = ({
     onEdit(task);
   };
 
-  const handleDelete = () => {
-    onDelete(task.id);
+  const handleDelete = async () => {
+    // onDelete(task.id);
+    await deleteTask(task.id);
   };
 
   return (
