@@ -1,4 +1,3 @@
-// import { PrismaClient } from "@prisma/client";
 import prisma from "../configs/prisma.config";
 import { Request, Response } from "express";
 import bcrpt from "bcrypt";
@@ -98,9 +97,9 @@ export const loginUser = async (req: Request, res: Response) => {
 //#region User Authentication
 /**
  * Authenticate a user by checking if the user is logged in.
- * @param req Request
- * @param res Response
- * @returns User Object
+ * @param req Express Request
+ * @param res Express Response
+ * @returns Prisma User Object
  */
 export const authenticateUser = async (req: Request, res: Response) => {
   const userId = req.user?.id;

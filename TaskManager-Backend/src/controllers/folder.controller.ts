@@ -40,9 +40,18 @@ export const createFolder = async (req: Request, res: Response) => {
     }
 
     const { name } = req.body as NewfolderBody;
+
     const folder = await prisma.folder.create({
       data: { name, userId },
     });
+
+    if (!folder) {
+      return res.status(400).json({ message: "Folder not created" });
+    }
+
+    return res
+      .status(201)
+      .json({ success: true, folder, message: "Folder created successfully" });
   } catch (error) {
     console.log(error);
   }

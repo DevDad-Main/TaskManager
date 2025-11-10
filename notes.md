@@ -3,6 +3,7 @@
 # Backup Data:
 
 > Optional command to backup our database and then restore it.
+> Also very handy for development and debugging, Checking if the db is saving specific data or any issues with our data
 
 ```bash
 # Export all data

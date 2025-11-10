@@ -1,9 +1,11 @@
 import express from "express";
 import { isAuthenticated } from "../middleware/auth.middleware";
-import { getfolders } from "../controllers/folder.controller";
+import { createFolder, getfolders } from "../controllers/folder.controller";
 
 const folderRouter = express.Router();
 
-folderRouter.get("/", isAuthenticated, getfolders);
+folderRouter.use(isAuthenticated);
+
+folderRouter.route("/").get(getfolders).post(createFolder);
 
 export default folderRouter;

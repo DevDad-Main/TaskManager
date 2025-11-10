@@ -666,12 +666,16 @@ const TaskBoard = () => {
                   <p className="text-muted-foreground mb-4">
                     Try adjusting your filters or create a new task.
                   </p>
-                  <DialogTrigger asChild>
-                    <Button>
-                      <Plus size={16} className="mr-2" />
-                      Create Task
-                    </Button>
-                  </DialogTrigger>
+                  <Button onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus size={16} className="mr-2" />
+                    Create Task
+                  </Button>
+                  {/* <DialogTrigger asChild> */}
+                  {/*   <Button> */}
+                  {/*     <Plus size={16} className="mr-2" /> */}
+                  {/*     Create Task */}
+                  {/*   </Button> */}
+                  {/* </DialogTrigger> */}
                 </motion.div>
               ) : (
                 <div
