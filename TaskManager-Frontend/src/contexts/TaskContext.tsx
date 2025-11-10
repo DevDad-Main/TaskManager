@@ -60,25 +60,27 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTasks = async () => {
-    console.log("fetchTasks");
-  };
-  // // Fetch tasks from backend
   // const fetchTasks = async () => {
-  //   setLoading(true);
-  //   setError(null);
-  //   try {
-  //     const response = await axiosApi.get("/api/v1/tasks");
-  //     if (response.data.success) {
-  //       setTasks(response.data.tasks || []);
-  //     }
-  //   } catch (err: any) {
-  //     setError("Failed to fetch tasks");
-  //     console.error("Error fetching tasks:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
+  //   console.log("fetchTasks");
   // };
+
+  // Fetch tasks from backend
+  const fetchTasks = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axiosApi.get("/api/v1/tasks");
+      if (response.data.success) {
+        console.log("response.data.tasks", response.data.tasks);
+        setTasks(response.data.tasks || []);
+      }
+    } catch (err: any) {
+      setError("Failed to fetch tasks");
+      console.error("Error fetching tasks:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch folders from backend
   const fetchFolders = async () => {
@@ -87,6 +89,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     try {
       const response = await axiosApi.get("/api/v1/folders");
       if (response.data.success) {
+        console.log("response.data.folders", response.data.folders);
         setFolders(response.data.folders || []);
       }
     } catch (err: any) {
@@ -102,6 +105,7 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     try {
       const response = await axiosApi.post("/api/v1/tasks", task);
       if (response.data.success) {
+        console.log("response.data.task", response.data.task);
         setTasks([...tasks, response.data.task]);
       }
     } catch (err: any) {

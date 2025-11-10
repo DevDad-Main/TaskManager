@@ -10,6 +10,9 @@ export const getfolders = async (req: Request, res: Response) => {
       where: {
         userId,
       },
+      include: {
+        tasks: true,
+      },
     });
 
     if (!folders || folders.length === 0) {
@@ -27,7 +30,6 @@ export const getfolders = async (req: Request, res: Response) => {
   } catch (error) {
     console.log(error);
   }
-  return res.status(200);
 };
 //#endregion
 
@@ -38,7 +40,6 @@ export const createFolder = async (req: Request, res: Response) => {
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
     const { name } = req.body as NewfolderBody;
 
     const folder = await prisma.folder.create({
