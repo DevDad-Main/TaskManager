@@ -58,3 +58,40 @@ export const createFolder = async (req: Request, res: Response) => {
   }
 };
 //#endregion
+
+//#region Update Folder
+export const updateFolder = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const isFolder = await prisma.folder.findUnique({
+      where: { id, userId },
+    });
+
+    if (!isFolder) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    const folder = await prisma.folder.update({
+      where: { id },
+      data: { name },
+    });
+
+    if (!folder) {
+      return res.status(400).json({ message: "Folder not updated" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, folder, message: "Update Folder Successfully" });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+//#endregion
+
+//#region Delete Folder
+export const deleteFolder = async (req: Request, res: Response) => {};
+//#endregion
