@@ -65,10 +65,24 @@ git clone https://github.com/DevDad-Main/TaskManager
 cd TaskManager
 ```
 
-2. **Install dependencies**
+2. **Docker Compose - Run the application**
+
+> .env should be in the root directory, Frontend and Backend.
+
+> Copy contents from the .env.example files and paste it into a new .env file for each directory.
 
 ```bash
-npm install
+docker compose up --build
+```
+
+> This will build the containers and run the application. The application will be available at http://localhost:5173 by default - Unless changed my yourself.
+
+### Installation (Local Development)
+
+1. **Install dependencies** (Optional for local development)
+
+```bash
+cd TaskManager/TaskManager-Frontend && npm install && cd ../TaskManager-Backend && npm install
 ```
 
 3. **Start the development server**
@@ -79,35 +93,6 @@ npm run dev
 
 4. **Open your browser**
    Navigate to `http://localhost:5173`
-
-### Backend Setup
-
-1. **Install backend dependencies**
-
-```bash
-cd TaskManager-Backend
-npm install
-```
-
-2. **Configure PostgreSQL**
-
-```bash
-# Create a .env file
-DATABASE_URL=postgresql://username:password@localhost:5432/taskmanager
-JWT_SECRET=your-secret-key
-```
-
-3. **Run migrations**
-
-```bash
-npm run migrate
-```
-
-4. **Start the backend server**
-
-```bash
-npm run dev
-```
 
 ## 📁 Project Structure
 
@@ -136,13 +121,13 @@ TaskManager/
 - [x] Advanced filtering
 - [x] Completion tracking
 - [x] Responsive design
-- [ ] User authentication
-- [ ] Backend API with PostgreSQL
-- [ ] Data persistence
 - [ ] Drag-and-drop reordering
 - [ ] Task due date reminders
 - [ ] Collaborative workspaces
 - [ ] Dark mode
+- [ x ] User authentication - Via JWT/Middleware
+- [ x ] Backend API with PostgreSQL/Prisma ORM
+- [ x ] Data persistence - Volumes
 
 ## 🤝 Contributing
 
@@ -178,5 +163,3 @@ This project is licensed under the MIT License.
 - [Framer Motion](https://www.framer.com/motion/) for animations
 
 ---
-
-Built with ❤️ using React, TypeScript, and modern web technologies

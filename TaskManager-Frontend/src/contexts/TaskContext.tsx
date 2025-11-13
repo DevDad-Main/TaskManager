@@ -67,7 +67,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     try {
       const response = await axiosApi.get("/api/v1/tasks");
       if (response.data.success) {
-        console.log("response.data.tasks", response.data.tasks);
         setTasks(response.data.tasks || []);
       }
     } catch (err: any) {
@@ -85,7 +84,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     try {
       const response = await axiosApi.get("/api/v1/folders");
       if (response.data.success) {
-        console.log("response.data.folders", response.data.folders);
         setFolders(response.data.folders || []);
       }
     } catch (err: any) {
@@ -101,7 +99,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
     try {
       const response = await axiosApi.post("/api/v1/tasks", task);
       if (response.data.success) {
-        console.log("response.data.task", response.data.task);
         setTasks([...tasks, response.data.task]);
       }
     } catch (err: any) {
@@ -129,7 +126,6 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
   // Delete task
   const deleteTask = async (taskId: string) => {
     try {
-      console.log("Deleting task:", taskId);
       const response = await axiosApi.delete(`/api/v1/tasks/${taskId}`);
       if (response.data.success) {
         setTasks(tasks.filter((t) => t.id !== taskId));
@@ -204,6 +200,9 @@ export const TaskProvider: React.FC<TaskProviderProps> = ({ children }) => {
             t.folderId === folderId ? { ...t, folderId: undefined } : t,
           ),
         );
+
+        // NOTE: Re-fetch the tasks as once we delete a folder, the tasks are still stagnant
+        await fetchTasks();
       }
     } catch (err: any) {
       setError("Failed to delete folder");
