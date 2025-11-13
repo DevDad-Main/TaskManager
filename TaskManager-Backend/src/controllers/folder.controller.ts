@@ -93,5 +93,34 @@ export const updateFolder = async (req: Request, res: Response) => {
 //#endregion
 
 //#region Delete Folder
-export const deleteFolder = async (req: Request, res: Response) => {};
+export const deleteFolder = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ message: "No folder id provided" });
+    }
+
+    //NOTE: This will either delete all the tasks in a folder or just be an empty array if there is no tasks in the folder.
+    await prisma.task.deleteMany({
+      where: { folderId: id },
+    });
+
+    const folder = await prisma.folder.delete({
+      where: { id: req.params.id },
+    });
+
+    if (!folder) {
+      return res.status(400).json({ message: "Folder Couldn't be deleted" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Folder Deleted Successfully",
+    });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 //#endregion

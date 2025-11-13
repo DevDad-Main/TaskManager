@@ -41,7 +41,7 @@ A modern, feature-rich task management system built with React, TypeScript, and 
 - **React Router** - Client-side routing
 - **Lucide React** - Beautiful icons
 
-### Backend (Planned)
+### Backend (In Progress)
 
 - **Node.js** - Runtime environment
 - **TypeScript** - End-to-end type safety
@@ -80,12 +80,12 @@ npm run dev
 4. **Open your browser**
    Navigate to `http://localhost:5173`
 
-### Backend Setup (Coming Soon)
+### Backend Setup
 
 1. **Install backend dependencies**
 
 ```bash
-cd backend
+cd TaskManager-Backend
 npm install
 ```
 
